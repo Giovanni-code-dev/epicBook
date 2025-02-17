@@ -1,14 +1,16 @@
-/* 🌟 Stile Generale */
+/* Stile Generale */
 body {
+    font-family: 'Share Tech Mono', monospace;
+    color: #00ff00;
     background-color: rgb(47, 26, 105);
+    margin: 0;
 }
 
 h1 {
     margin-top: 20px;
 }
 
-/* Stili globali per i testi */
-h1, h5, th, tr, p {
+h1, h5, #cartItems th {
     color: rgb(43, 177, 226);
 }
 
@@ -17,38 +19,31 @@ h2, ul li > a {
     color: rgb(226, 205, 43);
 }
 
-.custom-text {
-    text-align: center;
-    font-size: 14px;
-    color: rgb(255, 255, 255);
-}
+
 
 .card-body p {
     margin-top: 0;
     padding-top: 0;
+    color: #fbff00 !important;
 }
 
 /* Sidebar e Carrello */
 #sidebar {
-    font-family: 'Share Tech Mono', monospace;
-    color: #00ff00;
-    background-color: rgba(11, 0, 0, 0.09);
+    overflow-y: auto; /* Aggiunge lo scroll verticale */
+    background-color: rgba(0, 0, 0, 0.704);
     backdrop-filter: blur(5px);
-    width: 250px;
-    height: 100%;
-    transform: translateX(-250px);
+    width: 350px;
+    height: 100vh;
+    transform: translateX(-450px);
     transition: transform 0.3s ease-in-out;
     padding: 20px;
-}
-
-:root {
-    --bs-table-bg: transparent !important;
+    position: fixed;
 }
 
 /* Contenitore sidebar + bottone */
 #sidebarContainer {
-    height: 100%;
-    width: 50px;
+    height: 100vh;
+    width: 350px;
     position: fixed;
     top: 0;
     left: 0;
@@ -60,7 +55,7 @@ h2, ul li > a {
 
 /* Sidebar aperta */
 #sidebarContainer.open {
-    width: 250px;
+    width: 350px;
 }
 
 #sidebarContainer.open #sidebar {
@@ -69,7 +64,7 @@ h2, ul li > a {
 
 /* Bottone menu */
 .sidebar-btn {
-    position: absolute;
+    position: fixed;
     z-index: 1051;
     left: 0;
     top: 20px;
@@ -84,41 +79,31 @@ h2, ul li > a {
 
 /* Bottone si sposta a destra quando la sidebar è aperta */
 #sidebarContainer.open .sidebar-btn {
-    left: 250px;
+    left: 350px;
 }
 
 /* Stile Tabella Carrello */
 #cartItems tr {
-    background-color: rgba(11, 0, 0, 0.09);
+    /* background-color: rgba(11, 0, 0, 0.09);*/
     backdrop-filter: blur(5px);
     color: #00ff00;
-    font-family: 'Share Tech Mono', monospace;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* Cambia il colore del testo nella colonna "Prodotto" */
+#cartItems tr:hover {
+    background-color: rgba(0, 11, 3, 0.15);
+}
+
+/* Cambia il colore del testo nelle colonne "Prodotto" e "Prezzo" */
 td:first-child {
     color: #ff9800;
     font-weight: bold;
 }
 
-/* Cambia il colore del testo nella colonna "Prezzo" */
 td:nth-child(2) {
     color: #007bff;
     font-weight: bold;
-}
-
-/* Rimuove il bordo bianco delle righe Bootstrap */
-#cartItems tr:hover {
-    background-color: rgba(11, 0, 0, 0.15);
-}
-
-/* Cambia lo stile dell'intestazione della tabella */
-#cartItems th {
-    background-color: rgba(11, 0, 0, 0.2);
-    color: #00ff00;
-    font-family: 'Share Tech Mono', monospace;
 }
 
 /* Rende tutta la tabella trasparente come la sidebar */
@@ -138,32 +123,40 @@ td:nth-child(2) {
     background: rgba(0, 0, 0, 0.5);
 }
 
-.card .bookImage {
-    height: 370px;
-    width: 380px;
+.cardBook {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: auto;
+    word-wrap: break-word;
+    background-color: var(--bs-card-bg);
+    background-clip: border-box;
+    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    border-radius: var(--bs-card-border-radius);
+}
+
+.bookImage {
+    height: 450px;
+    width: 100%;
     object-fit: fill;
 }
 
 .responsiveText {
-    font-size: clamp(12px, 2vw, 16px);
-    color: orange;
-    font-weight: bold;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
 }
-/* Stile per le righe della tabella, uguale alla sidebar */
+
+/* Stile per le righe della tabella nella sidebar */
 .sidebar-row {
-    background-color: rgba(11, 0, 0, 0.09) !important;
+    margin: 8px 0;
+    background-color: rgba(0, 11, 0, 0.739) !important;
     backdrop-filter: blur(5px) !important;
-    color: #00ff00 !important;
-    font-family: 'Share Tech Mono', monospace !important;
     text-transform: uppercase !important;
     letter-spacing: 1px !important;
 }
 
-/* Rimuove il bordo bianco delle righe Bootstrap */
 .sidebar-row:hover {
     background-color: rgba(11, 0, 0, 0.15) !important;
 }

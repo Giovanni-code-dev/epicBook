@@ -1,3 +1,4 @@
+
 const baseUrl = 'https://striveschool-api.herokuapp.com/books';
 const bookContainer = document.getElementById("bookContainer");
 const searchInput = document.getElementById("searchInput");
@@ -20,21 +21,23 @@ function fetchBooks() {
 // Funzione per aggiungere/rimuovere un libro dal carrello
 function toggleCartItem(book, cartButton, cardElement) {
     const index = cartItemsArray.findIndex(item => item.title === book.title);
+    const sidebarButton = document.getElementById("toggleSidebar");
 
     if (index === -1) { 
-        // Se il libro non è nel carrello, lo aggiunge
         cartItemsArray.push(book);
-        cartButton.classList.add("btn-danger"); // Cambia colore al bottone per indicare che è nel carrello
-        cardElement.classList.add("border-success"); // Cambia bordo alla card
+        cartButton.classList.replace("btn-success", "btn-danger");
+        cardElement.classList.add("border-success");
     } else {
-        // Se il libro è già nel carrello, lo rimuove
         cartItemsArray.splice(index, 1);
-        cartButton.classList.remove("btn-danger");
+        cartButton.classList.replace("btn-danger", "btn-success");
         cardElement.classList.remove("border-success");
     }
 
-    renderCart(); // Aggiorna la UI del carrello
+    sidebarButton.classList.toggle("btn-warning", cartItemsArray.length > 0);
+    renderCart();
 }
+
+
 
 // generiamo dinamicamente le card dei libri e le aggiungiamo al DOM , all'inerno di bookContainer
 // Modifica `renderBooks` per gestire il click sul bottone del carrello
@@ -46,7 +49,7 @@ function renderBooks(allBooks) {
         col.className = "col-auto col-lg-3 col-md-4 col-sm-6 mt-4";
 
         const card = document.createElement("div");
-        card.className = "card shadow-lg position-relative overflow-hidden";
+        card.className = "cardBook shadow-lg position-relative overflow-hidden";
 
         const img = document.createElement("img");
         img.src = severino.img;
@@ -61,7 +64,7 @@ function renderBooks(allBooks) {
         title.textContent = severino.title;
 
         const buttonContainer = document.createElement("div");
-        buttonContainer.className = "d-flex justify-content-between mb-0 gap-2";
+        buttonContainer.className = "d-flex justify-content-end mb-0 gap-2";
 
         const cartButton = document.createElement("button");
         cartButton.className = "btn btn-success btn-cart";
@@ -91,25 +94,23 @@ function renderBooks(allBooks) {
 // Event listener per svuotare il carrello
 document.getElementById("clearCart").addEventListener("click", function () {
     cartItemsArray = []; // Svuota l'array
+
+    // Resetta i bottoni del carrello
+    document.querySelectorAll(".btn-cart").forEach(button => 
+        button.classList.replace("btn-danger", "btn-success")
+    );
+
+    // Rimuove il bordo verde dalle card
+    document.querySelectorAll(".cardBook").forEach(card => 
+        card.classList.remove("border-success")
+    );
+
+    // Rimuove la classe btn-warning dalla sidebar
+    document.getElementById("toggleSidebar").classList.remove("btn-warning");
+
     renderCart(); // Aggiorna la UI
 });
-/*
-// funzione per filtrare i libri
-function filterBooks() {
-    const query = searchInput.value.toLowerCase();
-    const filteredBooks = allBooks.filter(book => book.title.toLowerCase().includes(query));
-    renderBooks(filteredBooks);
-}
 
-// event listener per attivare la ricerca dopo 3 keyup
-let keyupCount = 0;
-searchInput.addEventListener("keyup", function () {
-    keyupCount++;
-    if (keyupCount === 3) {
-        filterBooks();
-        keyupCount = 0; 
-    }
-}); */
 
 // funzione per filtrare i libri
 function filterBooks() {
@@ -129,53 +130,57 @@ searchInput.addEventListener("keyup", filterBooks);
 
 function renderCart() {
     const tBody = document.getElementById("cartItems");
-    const totalItems = document.getElementById("totalItems");
-    const totalPrice = document.getElementById("totalPrice");
-
     tBody.innerHTML = ""; // Svuota la tabella prima di riempirla
-    let total = 0;
 
-    // Usa map() per creare le righe della tabella
     const rows = cartItemsArray.map((book, index) => {
         const row = document.createElement("tr");
-        row.classList.add("sidebar-row")
-        row.innerHTML = `
-            <td>${book.title}</td>
-            <td>€${book.price.toFixed(2)}</td>
-            <td><button class="btn btn-sm btn-danger remove-item" data-index="${index}"><i class="bi bi-trash3"></i></button></td>
-        `;
-        total += book.price;
-        return row; // Restituisce la riga creata
-    });
+        row.className = "sidebar-row";
 
-    // Aggiunge tutte le righe in un'unica operazione
-    tBody.append(...rows);
+        const titleCell = document.createElement("td");
+        titleCell.textContent = book.title;
 
-    totalItems.textContent = cartItemsArray.length;
-    totalPrice.textContent = total.toFixed(2);
+        const priceCell = document.createElement("td");
+        priceCell.textContent = `€${book.price.toFixed(2)}`;
 
-    // Aggiunge gli event listener ai pulsanti di rimozione
-    document.querySelectorAll(".remove-item").forEach(button => {
-        button.addEventListener("click", function () {
-            const index = this.getAttribute("data-index");
-            const removedBook = cartItemsArray[index]; // Ottieni il libro rimosso
-            cartItemsArray.splice(index, 1);
-            renderCart();
+        const removeCell = document.createElement("td");
 
-            // 🔹 Trova la card corrispondente e aggiorna il bottone carrello
-            const bookCards = document.querySelectorAll(".bookImage");
-            bookCards.forEach(img => {
+        const removeButton = document.createElement("button");
+        removeButton.className = "btn btn-sm btn-danger remove-item";
+        removeButton.dataset.index = index;
+        removeButton.innerHTML = '<i class="bi bi-trash3"></i>';
+
+        // Event listener per rimuovere un elemento dal carrello
+        removeButton.addEventListener("click", function () {
+            const removedBook = cartItemsArray.splice(index, 1)[0]; // Rimuove il libro dal carrello
+            renderCart(); // Aggiorna la UI del carrello
+
+            // Trova la card corrispondente e aggiorna il bottone carrello
+            document.querySelectorAll(".bookImage").forEach(img => {
                 if (img.alt === removedBook.title) {
-                    const card = img.closest(".card");
+                    const card = img.closest(".cardBook");
                     const cartButton = card.querySelector(".btn-cart");
-                    cartButton.classList.remove("btn-danger"); // Torna verde
-                    cartButton.classList.add("btn-success");
-                    card.classList.remove("border-success"); // Rimuove bordo verde
+                    cartButton.classList.replace("btn-danger", "btn-success");
+                    card.classList.remove("border-success");
                 }
             });
         });
+
+        // Costruzione della riga
+        removeCell.appendChild(removeButton);
+        row.append(titleCell, priceCell, removeCell);
+
+        return row;
     });
+
+    tBody.append(...rows); // Aggiunge tutte le righe con un'unica operazione
+
+    // Aggiorna il totale
+    document.getElementById("totalItems").textContent = cartItemsArray.length;
+    document.getElementById("totalPrice").textContent = cartItemsArray
+        .reduce((sum, book) => sum + book.price, 0)
+        .toFixed(2);
 }
+
 
 
 //sidebar
