@@ -1,59 +1,57 @@
-
 const baseUrl = 'https://striveschool-api.herokuapp.com/books';
 const bookContainer = document.getElementById("bookContainer");
 const searchInput = document.getElementById("searchInput");
-const searchButton = document.getElementById("searchButton");
+const cartButton = document.getElementById("cartButton");
+const cartCount = document.getElementById("cartCount");
+const sidebarButton = document.getElementById("toggleSidebar");
+const sidebarContainer = document.getElementById("sidebarContainer");
 
-let allBooks = []; // variabile globale per salvare tutti i libri
-let cartItemsArray = []; // Array globale per salvare i libri nel carrello
+let allBooks = [];
+let cartItemsArray = [];
 
-// funzione per recuperare fare fetch API
+// Funzione per recuperare i dati dall'API
 function fetchBooks() {
-    fetch(baseUrl) // richiesta http API
-        .then(response => response.json()) // convertiamo la risposta in JSON
-        .then((malachia) => { // seconda promise per response.json() malachia ora è un array di oggetti libro 
-            allBooks = malachia; // salva i dati globalmente in allBooks
-            renderBooks(allBooks); // mostra tutti i libri inizialmente sulla pagina zebbe
+    fetch(baseUrl)
+        .then(response => response.json())
+        .then((books) => {
+            allBooks = books;
+            renderBooks(allBooks);
         })
-        .catch(error => console.error("Houston, we have a problem! With code:", error));
+        .catch(error => console.error("Errore nel recupero dei dati:", error));
 }
 
 // Funzione per aggiungere/rimuovere un libro dal carrello
 function toggleCartItem(book, cartButton, cardElement) {
     const index = cartItemsArray.findIndex(item => item.title === book.title);
-    const sidebarButton = document.getElementById("toggleSidebar");
 
-    if (index === -1) { 
+    if (index === -1) {
         cartItemsArray.push(book);
-        cartButton.classList.replace("btn-success", "btn-danger");
+        cartButton.classList.replace("btn-success", "btn-warning");
         cardElement.classList.add("border-success");
     } else {
         cartItemsArray.splice(index, 1);
-        cartButton.classList.replace("btn-danger", "btn-success");
+        cartButton.classList.replace("btn-warning", "btn-success");
         cardElement.classList.remove("border-success");
     }
 
-    sidebarButton.classList.toggle("btn-warning", cartItemsArray.length > 0);
+    updateCartCount();
     renderCart();
 }
 
+// Funzione per generare le card dei libri
+function renderBooks(books) {
+    bookContainer.innerHTML = "";
 
-
-// generiamo dinamicamente le card dei libri e le aggiungiamo al DOM , all'inerno di bookContainer
-// Modifica `renderBooks` per gestire il click sul bottone del carrello
-function renderBooks(allBooks) {
-    bookContainer.innerHTML = ""; // Svuota il contenitore prima di aggiungere nuovi elementi
-
-    const elements = allBooks.map(severino => {
+    const elements = books.map(book => {
         const col = document.createElement("div");
-        col.className = "col-auto col-lg-3 col-md-4 col-sm-6 mt-4";
+        col.className = "col-lg-3 col-md-4 p-2";
 
         const card = document.createElement("div");
         card.className = "cardBook shadow-lg position-relative overflow-hidden";
 
         const img = document.createElement("img");
-        img.src = severino.img;
-        img.alt = severino.title;
+        img.src = book.img;
+        img.alt = book.title;
         img.className = "card-img-top img-fluid bookImage";
 
         const cardBody = document.createElement("div");
@@ -61,26 +59,33 @@ function renderBooks(allBooks) {
 
         const title = document.createElement("p");
         title.className = "responsiveText mb-0";
-        title.textContent = severino.title;
+        title.textContent = book.title;
 
         const buttonContainer = document.createElement("div");
-        buttonContainer.className = "d-flex justify-content-end mb-0 gap-2";
-
-        const cartButton = document.createElement("button");
-        cartButton.className = "btn btn-success btn-cart";
-        cartButton.innerHTML = '<i class="bi bi-cart-fill fs-5"></i>';
+        buttonContainer.className = "d-flex justify-content-evenly align-items-center mb-1 gap-2";
 
         const detailsButton = document.createElement("button");
         detailsButton.className = "btn btn-primary";
         detailsButton.innerHTML = '<i class="bi bi-info-circle-fill fs-5"></i>';
 
-        // Event listener per aggiungere al carrello
-        cartButton.addEventListener("click", function () {
-            toggleCartItem(severino, cartButton, card);
-        });
+        const cartButton = document.createElement("button");
+        cartButton.className = "btn btn-success btn-cart";
+        cartButton.innerHTML = '<i class="bi bi-cart-fill fs-5"></i>';
 
-        // Costruzione della card
-        buttonContainer.append(cartButton, detailsButton);
+        const dismissButton = document.createElement("button");
+        dismissButton.className = "btn btn-danger";
+        dismissButton.innerHTML = '<i class="bi bi-x-circle-fill fs-5"></i>';
+
+        // Evento per aggiungere/rimuovere dal carrello
+        cartButton.addEventListener("click", () => {toggleCartItem(book, cartButton, card);});
+
+        // Evento per rimuovere la card dalla UI
+        dismissButton.addEventListener("click",  () => {removeBook(book);});
+
+        // Evento per aprire la pagina dei dettagli con l'ASIN come parametro
+        detailsButton.addEventListener("click", () => {window.location.href = `dettagli.html?id=${book.asin}`;});
+
+        buttonContainer.append(detailsButton, cartButton, dismissButton);
         cardBody.append(title, buttonContainer);
         card.append(img, cardBody);
         col.append(card);
@@ -88,53 +93,63 @@ function renderBooks(allBooks) {
         return col;
     });
 
-    bookContainer.append(...elements); // Aggiunge tutti gli elementi con un'unica operazione
+    bookContainer.append(...elements);
+
 }
 
-// Event listener per svuotare il carrello
-document.getElementById("clearCart").addEventListener("click", function () {
-    cartItemsArray = []; // Svuota l'array
 
-    // Resetta i bottoni del carrello
-    document.querySelectorAll(".btn-cart").forEach(button => 
-        button.classList.replace("btn-danger", "btn-success")
-    );
 
-    // Rimuove il bordo verde dalle card
-    document.querySelectorAll(".cardBook").forEach(card => 
-        card.classList.remove("border-success")
-    );
+// Funzione per rimuovere una card dal DOM e dall'array allBooks
+function removeBook(book) {
+    // Rimuove il libro dalla lista allBooks
+    allBooks = allBooks.filter(item => item.title !== book.title);
 
-    // Rimuove la classe btn-warning dalla sidebar
-    document.getElementById("toggleSidebar").classList.remove("btn-warning");
+    // Ricarica il contenuto della pagina senza il libro rimosso
+    renderBooks(allBooks);
+}
 
-    renderCart(); // Aggiorna la UI
+function updateCartCount() {
+    cartCount.textContent = cartItemsArray.length;
+
+    // Seleziona il bottone che apre il modale
+    const cartButton = document.getElementById("cartButton");
+
+    // Usa toggle per gestire le classi dinamicamente, senza condizioni extra
+    cartButton.classList.toggle("btn-warning", cartItemsArray.length > 0);
+    cartButton.classList.toggle("btn-success", cartItemsArray.length === 0);
+}
+
+
+
+// Event listener per aprire il modale carrello
+cartButton.addEventListener("click", function () {
+    const cartModal = new bootstrap.Modal(document.getElementById("cartModal"));
+    cartModal.show();
 });
 
+// Funzione per svuotare il carrello e ripristinare i bottoni delle card
+document.getElementById("clearCart").addEventListener("click", function () {
+    cartItemsArray = []; // Svuota l'array del carrello
+    updateCartCount();
+    renderCart();
 
-// funzione per filtrare i libri
-function filterBooks() {
-    const query = searchInput.value.toLowerCase();
+    // Ripristina i bottoni delle card (da rosso a verde) e rimuove il bordo verde
+    document.querySelectorAll(".btn-cart").forEach(button =>
+        button.classList.replace("btn-warning", "btn-success")
+    );
+    document.querySelectorAll(".cardBook").forEach(card =>
+        card.classList.remove("border-success")
+    );
+});
 
-    if (query.length >= 3) { // Esegue il filtro solo se il testo ha più di 3 caratteri
-        const filteredBooks = allBooks.filter(malachia => malachia.title.toLowerCase().includes(query));
-        renderBooks(filteredBooks);
-    }
-    else {
-        renderBooks(allBooks)
-    }
-}
-
-// event listener per attivare la ricerca dopo 3 keyup
-searchInput.addEventListener("keyup", filterBooks);
-
+// Funzione per mostrare il carrello nel modale
+// Funzione per mostrare il carrello nel modale
 function renderCart() {
     const tBody = document.getElementById("cartItems");
-    tBody.innerHTML = ""; // Svuota la tabella prima di riempirla
+    tBody.innerHTML = "";
 
-    const rows = cartItemsArray.map((book, index) => {
+    cartItemsArray.forEach((book, index) => {
         const row = document.createElement("tr");
-        row.className = "sidebar-row";
 
         const titleCell = document.createElement("td");
         titleCell.textContent = book.title;
@@ -143,38 +158,32 @@ function renderCart() {
         priceCell.textContent = `€${book.price.toFixed(2)}`;
 
         const removeCell = document.createElement("td");
-
         const removeButton = document.createElement("button");
-        removeButton.className = "btn btn-sm btn-danger remove-item";
-        removeButton.dataset.index = index;
+        removeButton.className = "btn btn-sm btn-danger";
         removeButton.innerHTML = '<i class="bi bi-trash3"></i>';
 
-        // Event listener per rimuovere un elemento dal carrello
+        // Evento per rimuovere un elemento dal carrello
         removeButton.addEventListener("click", function () {
             const removedBook = cartItemsArray.splice(index, 1)[0]; // Rimuove il libro dal carrello
             renderCart(); // Aggiorna la UI del carrello
+            updateCartCount(); // Aggiorna il numero nel bottone carrello
 
             // Trova la card corrispondente e aggiorna il bottone carrello
             document.querySelectorAll(".bookImage").forEach(img => {
                 if (img.alt === removedBook.title) {
                     const card = img.closest(".cardBook");
                     const cartButton = card.querySelector(".btn-cart");
-                    cartButton.classList.replace("btn-danger", "btn-success");
+                    cartButton.classList.replace("btn-warning", "btn-success");
                     card.classList.remove("border-success");
                 }
             });
         });
 
-        // Costruzione della riga
         removeCell.appendChild(removeButton);
         row.append(titleCell, priceCell, removeCell);
-
-        return row;
+        tBody.appendChild(row);
     });
 
-    tBody.append(...rows); // Aggiunge tutte le righe con un'unica operazione
-
-    // Aggiorna il totale
     document.getElementById("totalItems").textContent = cartItemsArray.length;
     document.getElementById("totalPrice").textContent = cartItemsArray
         .reduce((sum, book) => sum + book.price, 0)
@@ -182,15 +191,25 @@ function renderCart() {
 }
 
 
+// Funzione per filtrare i libri con la barra di ricerca
+function filterBooks() {
+    const query = searchInput.value.toLowerCase();
 
-//sidebar
-const toggleSidebar = document.getElementById("toggleSidebar");
-const sidebarContainer = document.getElementById("sidebarContainer");
+    if (query.length >= 3) {
+        const filteredBooks = allBooks.filter(book => book.title.toLowerCase().includes(query));
+        renderBooks(filteredBooks);
+    } else {
+        renderBooks(allBooks);
+    }
+}
 
-// Apri/chiudi la sidebar con un solo bottone
-toggleSidebar.addEventListener("click", function () {
+// Event listener per attivare la ricerca dopo 3 caratteri digitati
+searchInput.addEventListener("keyup", filterBooks);
+
+// Event listener per aprire/chiudere la sidebar (anche se è vuota)
+sidebarButton.addEventListener("click", function () {
     sidebarContainer.classList.toggle("open");
 });
 
-// esegui fetchBooks() per popolare `allBooks`
+// Avvia il fetch dei libri al caricamento della pagina
 fetchBooks();
