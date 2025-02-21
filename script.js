@@ -26,17 +26,19 @@ function toggleCartItem(book, cartButton, cardElement) {
 
     if (index === -1) {
         cartItemsArray.push(book);
-        cartButton.classList.replace("btn-success", "btn-warning");
-        cardElement.classList.add("border-success");
     } else {
         cartItemsArray.splice(index, 1);
-        cartButton.classList.replace("btn-warning", "btn-success");
-        cardElement.classList.remove("border-success");
     }
+
+    // Usa toggle invece di replace per gestire le classi
+    cartButton.classList.toggle("btn-success");
+    cartButton.classList.toggle("btn-warning");
+    cardElement.classList.toggle("border-success");
 
     updateCartCount();
     renderCart();
 }
+
 
 // Funzione per generare le card dei libri
 function renderBooks(books) {
@@ -119,13 +121,19 @@ function updateCartCount() {
     cartButton.classList.toggle("btn-success", cartItemsArray.length === 0);
 }
 
+// piccolo debug consigliato da chat gpt per errori del modale
 
+document.getElementById("cartModal").addEventListener("hidden.bs.modal", function () {
+    
+    document.activeElement.blur(); 
+    document.getElementById("cartButton").focus(); // Sposta il focus sul bottone del carrello
 
-// Event listener per aprire il modale carrello
-cartButton.addEventListener("click", function () {
-    const cartModal = new bootstrap.Modal(document.getElementById("cartModal"));
-    cartModal.show();
+    // Rimuove il backdrop se ancora presente
+    document.querySelectorAll(".modal-backdrop").forEach(el => el.remove());
+    document.body.classList.remove("modal-open"); // Riabilita l'interazione con la pagina
+    document.body.style.overflow = "auto"; // Sblocca lo scroll
 });
+
 
 // Funzione per svuotare il carrello e ripristinare i bottoni delle card
 document.getElementById("clearCart").addEventListener("click", function () {
@@ -133,14 +141,17 @@ document.getElementById("clearCart").addEventListener("click", function () {
     updateCartCount();
     renderCart();
 
-    // Ripristina i bottoni delle card (da rosso a verde) e rimuove il bordo verde
-    document.querySelectorAll(".btn-cart").forEach(button =>
-        button.classList.replace("btn-warning", "btn-success")
-    );
-    document.querySelectorAll(".cardBook").forEach(card =>
-        card.classList.remove("border-success")
-    );
+    // Ripristina i bottoni delle card e rimuove il bordo verde
+    document.querySelectorAll(".btn-cart").forEach(button => {
+        button.classList.remove("btn-warning");
+        button.classList.add("btn-success"); // Riporta il bottone allo stato iniziale
+    });
+
+    document.querySelectorAll(".cardBook").forEach(card => {
+        card.classList.remove("border-success");
+    });
 });
+
 
 // Funzione per mostrare il carrello nel modale
 // Funzione per mostrare il carrello nel modale

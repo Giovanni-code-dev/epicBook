@@ -10,14 +10,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="bg-dark text-white">
     <h1 class="text-center">EPICBook</h1>
     <h2 class="text-center">Compito di fine settimana</h2>
 
     <!-- Barra di ricerca -->
     <div class="container mt-4">
         <div class="row justify-content-center">
-            <div class="col-md-9 ">
+            <div class="col-md-9">
                 <div class="input-group">
                     <input type="text" id="searchInput" class="form-control" placeholder="Cerca...">
                     <button class="btn btn-primary" id="searchButton">
@@ -28,57 +28,58 @@
         </div>
     </div>
 
-    <!-- Bottone carrello -->
-    
-    <button id="cartButton" class="btn btn-success position-fixed top-0 end-0">
-        <i class="bi bi-cart-fill"></i> <span id="cartCount" class="badge">0</span>
-    </button>
-
-    <!-- Sidebar (vuota per futuro utilizzo) -->
+    <!-- Sidebar -->
     <div id="sidebarContainer" class="position-absolute closed">
+        <!-- Bottone per aprire/chiudere la sidebar -->
         <button id="toggleSidebar" class="btn btn-success sidebar-btn">
             <i class="bi bi-list"></i> 
         </button>
+
+        <!-- Contenuto della sidebar -->
         <div id="sidebar" class="shadow p-3">
             <h5 class="text-center">Sidebar</h5>
         </div>
     </div>
 
+    <!-- Bottone carrello fisso in alto a destra -->
+    <button id="cartButton" class="btn btn-success position-fixed" data-bs-toggle="modal" data-bs-target="#cartModal">
+        <i class="bi bi-cart-fill"></i> <span id="cartCount" class="badge">0</span>
+    </button>
+
     <!-- Contenitore principale -->
     <div class="container mt-4">
-        <div id="bookContainer" class="d-flex justify-content-center align-items-center row "></div>
+        <div id="bookContainer" class="d-flex justify-content-center align-items-center row"></div>
     </div>
 
-<!-- Modale per il carrello -->
-<div class="modal fade customModal" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modalContent">
-            <div class="modal-header border-0">
-                <h5 class="modal-title">Carrello</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <table class="table table-dark table-striped">
-                    <thead>
-                        <tr>
-                            <th>Titolo</th>
-                            <th>Prezzo</th>
-                            <th>Azioni</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cartItems"></tbody>
-                </table>
-                <p class="text-center"><strong>Totale pezzi:</strong> <span id="totalItems">0</span></p>
-                <p class="text-center"><strong>Totale prezzo:</strong> €<span id="totalPrice">0.00</span></p>
-            </div>
-            <div class="modal-footer border-0">
-                <button id="clearCart" class="btn btn-warning">Svuota Carrello</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+    <!-- Modale per il carrello -->
+    <div class="modal fade customModal" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Carrello</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-dark table-striped">
+                        <thead>
+                            <tr>
+                                <th>Titolo</th>
+                                <th>Prezzo</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartItems"></tbody>
+                    </table>
+                    <p class="text-center"><strong>Totale pezzi:</strong> <span id="totalItems">0</span></p>
+                    <p class="text-center"><strong>Totale prezzo:</strong> €<span id="totalPrice">0.00</span></p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button id="clearCart" class="btn btn-warning">Svuota Carrello</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/script.js"></script>

@@ -1,46 +1,21 @@
 /* Stile Generale */
 body {
     font-family: 'Share Tech Mono', monospace;
-    color: #00ff00;
-    background-color: rgb(47, 26, 105);
     margin: 0;
 }
 
-h1 {
-    margin-top: 20px;
-}
-
-h1, h5, #cartItems th {
-    color: rgb(43, 177, 226);
-}
-
-h2, ul li > a {
-    text-decoration: none;
-    color: rgb(226, 205, 43);
-}
-
-
-
-.card-body p {
-    margin-top: 0;
-    padding-top: 0;
-    color: #fbff00 !important;
-}
-
-/* Sidebar e Carrello */
+/* Sidebar */
 #sidebar {
-    overflow-y: auto; /* Aggiunge lo scroll verticale */
-    background-color: rgba(0, 0, 0, 0.704);
+    overflow-y: auto;
     backdrop-filter: blur(5px);
     width: 350px;
     height: 100vh;
     transform: translateX(-450px);
     transition: transform 0.3s ease-in-out;
-    padding: 20px;
     position: fixed;
 }
 
-/* Contenitore sidebar + bottone */
+/* Sidebar aperta */
 #sidebarContainer {
     height: 100vh;
     width: 350px;
@@ -53,11 +28,6 @@ h2, ul li > a {
     transition: width 0.3s ease-in-out;
 }
 
-/* Sidebar aperta */
-#sidebarContainer.open {
-    width: 350px;
-}
-
 #sidebarContainer.open #sidebar {
     transform: translateX(0);
 }
@@ -66,15 +36,8 @@ h2, ul li > a {
 .sidebar-btn {
     position: fixed;
     z-index: 1051;
-    left: 0;
+    left: 10px;
     top: 20px;
-    transition: left 0.3s ease-in-out;
-    border-radius: 0 5px 5px 0;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* Bottone si sposta a destra quando la sidebar è aperta */
@@ -82,159 +45,41 @@ h2, ul li > a {
     left: 350px;
 }
 
-/* Stile Tabella Carrello */
-#cartItems tr {
-    /* background-color: rgba(11, 0, 0, 0.09);*/
-    backdrop-filter: blur(5px);
-    color: #00ff00;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+/* Bottone Carrello */
+#cartButton {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1051;
 }
 
-#cartItems tr:hover {
-    background-color: rgba(0, 11, 3, 0.15);
+/* Contenitore principale */
+#bookContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Cambia il colore del testo nelle colonne "Prodotto" e "Prezzo" */
-td:first-child {
-    color: #ff9800;
-    font-weight: bold;
-}
-
-td:nth-child(2) {
-    color: #007bff;
-    font-weight: bold;
-}
-
-/* Rende tutta la tabella trasparente come la sidebar */
-.table {
-    background: transparent;
-    border-collapse: separate;
-    border-spacing: 0 10px;
-}
-
-/* Stili per le Card dei Libri */
-.card-body {
-    border-radius: 10px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.5);
-}
-
+/* Stile per le card dei libri */
 .cardBook {
     position: relative;
     display: flex;
     flex-direction: column;
-    min-width: 0;
-    height: auto;
-    word-wrap: break-word;
-    background-color: var(--bs-card-bg);
-    background-clip: border-box;
-    border: var(--bs-card-border-width) solid var(--bs-card-border-color);
-    border-radius: var(--bs-card-border-radius);
 }
 
 .bookImage {
-    border-radius: 10px;
-    height: 450px;
-    width: 100%;
-    object-fit: fill;
-}
-
-.responsiveText {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-/* Stile per le righe della tabella nella sidebar */
-.sidebar-row {
-    border-radius: 10px;
-    margin: 8px 0;
-    background-color: rgba(0, 11, 0, 0.739) !important;
-    backdrop-filter: blur(5px) !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-}
-
-.sidebar-row:hover {
-    background-color: rgba(11, 0, 0, 0.15) !important;
-}
-
-/* Imposta il bottone del carrello della stessa dimensione della sidebar */
-#cartButton {
-    border-radius: 8px;
-    margin-top: 24px;
-    margin-right: 9px;
-    width: 48px; /* Stessa larghezza della sidebar */
-    height: 48px; /* Stessa altezza della sidebar */
-    display: flex;
-    align-items: center;
-    justify-content: center;
     
+        max-width: 480px;
+        min-height: 510px;
+        border-radius: 10px;
 }
 
-/* Cambia il colore dell'icona del carrello in bianco */
-#cartButton i {
-    color: white; /* Forza il colore bianco */
-    font-size: 20px; /* Adatta la dimensione */
-}
-
-/* Permetti di scrollare la pagina anche con il modale aperto */
-body.modal-open {
-    overflow: visible !important;
-}
-
-/* Backdrop grande solo quanto il modale */
-.modal-backdrop {
-    position: absolute !important;
-    width: auto !important;
-    height: auto !important;
-    inset: auto !important;
-    background: rgba(0, 0, 0, 0.5) !important; /* Sfondo semi-trasparente */
-    backdrop-filter: blur(10px); /* Effetto opaco */
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none; /* Evita di bloccare i click sugli elementi dietro */
-}
-
-/* Il modale rimane sempre centrato */
-.customModal .modalDialog {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh; /* Altezza minima per mantenere il centro */
-    width: 100%;
-    pointer-events: auto; /* Ripristina i click solo sul modale */
-}
-
-/* Stile del modale trasparente opaco */
+/* Modale */
 .customModal .modalContent {
-    z-index: 1055 ;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
+   
     width: auto;
     max-width: 90%;
-    min-height: 200px; /* Altezza minima per il centro */
-    position: relative;
-    pointer-events: auto; /* Assicura che gli elementi dentro il modale siano cliccabili */
-}
-
-/* Assicura che i bottoni dentro il modale siano sempre cliccabili */
-.customModal .modalFooter button {
+    min-height: 200px;
     pointer-events: auto;
 }
-
-.borderSuccess {
-    box-shadow: #ff9800;
-}
-
-
 
